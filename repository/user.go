@@ -6,10 +6,12 @@ import (
 	"sync"
 	"time"
 )
+
 // user结构体
 type User struct {
 	Id            int       `gorm:"column:id" json:"id"`
 	Name          string    `gorm:"column:name" json:"name"`
+	Pwd           string    `gorm:"column:pwd" json:"-"`
 	FollowCount   int       `gorm:"column:follow_count" json:"follow_count"`
 	FollowerCount int       `gorm:"column:follower_count" json:"follower_count"`
 	CreateTime    time.Time `gorm:"column:created_time" json:"-"`
@@ -25,6 +27,7 @@ type UserDao struct {
 var userDao *UserDao
 var userOnce sync.Once
 
+// DAO实例
 func NewUserDaoInstance() *UserDao {
 	userOnce.Do(
 		func() {
@@ -34,13 +37,24 @@ func NewUserDaoInstance() *UserDao {
 	return userDao
 }
 
+// 创建一个新用户
+func (*UserDao) CreateUser(name string, pwd string) int {
+	user := User{
+		Name:       name,
+		Pwd:        pwd,
+		CreateTime: time.Now(),
+	}
+	db.Create(&user)
+	return user.Id
+}
 
-
-// 实现通过id查询用户
-func (*UserDao) QueryUserById(id int) (*User, error) {
+// 实现通过用户名查询用户
+func (*UserDao) QueryUserByName(name string) (*User, error) {
 	var user *User
-	err := db.Where("id = ?", id).Find(&user).Error
+	println("the query name is :", name)
+	err := db.Where("name = ?", name).First(&user).Error
 	if err == gorm.ErrRecordNotFound {
+		println("not found")
 		return nil, nil
 	}
 	if err != nil {

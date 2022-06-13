@@ -8,6 +8,7 @@ web框架：gin
 中间件：Redis
 #### 演示视频：
 [演示视频地址](img/tiktokdemo.mp4)
+[在线播放](http://rcmz8xyya.hd-bkt.clouddn.com/tiktokdemo.mp4)
 
 ## 小组简介
 队名： 这次一定能做完队  
